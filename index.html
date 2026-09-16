@@ -1,668 +1,213 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TNXUS CLUB</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script>
-        tailwind.config = { theme: { extend: { colors: { rank1:'#FFD700', rank2:'#C0C0C0', rank3:'#CD7F32', gelap:'#0F172A', kartu:'#1E293B' } } }
-    </script>
-    <style>
-        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
-        body{background:#000;color:#fff;padding-top:48px;min-height:100vh}
-        .top-notice{position:fixed;top:0;left:0;width:100%;padding:12px;text-align:center;font-weight:bold;font-size:15px;z-index:999;background:linear-gradient(45deg,red,blue,green,yellow,purple);background-size:400% 400%;animation:gradientShift 8s ease infinite}
-        @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-        .header-buttons{position:fixed;top:48px;right:15px;z-index:998;display:flex;gap:10px}
-        .btn-header{background:#222;border:1px solid #444;color:white;padding:10px 16px;border-radius:6px;cursor:pointer;font-weight:bold;transition:.3s}
-        .btn-header:hover{background:#ff0055;border-color:#ff0055}
-        .side-menu{position:fixed;top:48px;right:-320px;width:300px;height:calc(100vh - 48px);background:#111;z-index:997;padding:30px 20px;transition:right .4s ease}
-        .side-menu.active{right:0}
-        .side-menu a{display:block;color:white;text-decoration:none;padding:14px 0;border-bottom:1px solid #222;font-size:18px}
-        .side-menu a:hover{color:#ff0055;padding-left:8px}
-        .side-menu a.afiliasi-link{color:#ffcc00}
-        main{padding:20px;max-width:1200px;margin:90px auto 0;min-height:calc(100vh - 140px)}
-        .page{display:none}
-        .page.active{display:block}
-        .box-logo{width:100%;max-width:280px;aspect-ratio:1/1;margin:20px auto;border-radius:12px;overflow:hidden;background:#111}
-        .box-slider{width:100%;max-width:450px;aspect-ratio:1/1;margin:20px auto;border-radius:12px;overflow:hidden;background:#111;position:relative;touch-action:pan-y;cursor:grab;user-select:none}
-        .box-slider:active{cursor:grabbing}
-        .slides{display:flex;height:100%}
-        .slide{width:100%;flex-shrink:0}
-        .slide-img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
-        .slider-dots{position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:5}
-        .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4);border:none;cursor:pointer;padding:0}
-        .dot.active{background:#ff0055;width:18px;border-radius:4px}
-        video{width:100%;height:100%;object-fit:cover}
-        h1{text-align:center;color:#ff0055;margin:15px 0;font-size:28px}
-        .desc{text-align:center;color:#aaa;margin-bottom:30px}
-        .timer-wrapper{background:linear-gradient(145deg,#1a1a1a,#2a2a2a);border:2px solid #ff0055;border-radius:15px;padding:20px 30px;margin:20px auto;max-width:400px;text-align:center;box-shadow:0 0 15px rgba(255,0,85,.3)}
-        .timer-wrapper.habis{border-color:#666;background:#1a1a1a;box-shadow:none}
-        .timer-label-header{color:#ff6699;font-size:14px;margin-bottom:15px;letter-spacing:2px;text-transform:uppercase}
-        .preorder-timer{font-size:28px;color:#fff;font-weight:bold;text-shadow:0 0 8px #ff0055;font-family:monospace;display:flex;justify-content:center;gap:8px;flex-wrap:wrap}
-        .timer-bagian{background:#111;padding:8px 12px;border-radius:8px;min-width:55px}
-        .timer-label{font-size:11px;color:#aaa;margin-top:4px}
-        .status-timer{margin-top:12px;font-size:14px;font-weight:bold;color:#ff0055}
-        .status-timer.habis{color:#666}
-        .timer-label,.stok-label{position:absolute;top:10px;z-index:3;font-size:12px;padding:4px 8px;border-radius:4px;font-weight:bold}
-        .timer-label{left:10px;background:rgba(255,0,0,.85);color:white}
-        .stok-label{right:10px;background:rgba(0,200,80,.9);color:white}
-        .stok-habis{background:rgba(100,100,100,.9)}
-        .habis-overlay{position:absolute;inset:0;background:rgba(0,0,0,.6);z-index:4;display:flex;align-items:center;justify-content:center;color:#ff4444;font-size:22px;font-weight:bold}
-        .produk-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:25px;margin:40px 0}
-        .kartu-produk{background:#111;border-radius:12px;overflow:hidden;border:1px solid #222;transition:.3s}
-        .kartu-produk:hover{border-color:#ff0055;transform:translateY(-5px)}
-        .kartu-produk.habis{opacity:.7;border-color:#333}
-        .kartu-produk.kunci{opacity:.6;border-color:#333}
-        .kartu-media{position:relative;aspect-ratio:1/1;overflow:hidden;background:#000;touch-action:pan-y;cursor:grab;user-select:none}
-        .kartu-media:active{cursor:grabbing}
-        .kartu-slides{display:flex;height:100%}
-        .kartu-slide{width:100%;flex-shrink:0}
-        .kartu-slide-img{width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
-        .kartu-dots{position:absolute;bottom:6px;left:50%;transform:translateX(-50%);display:flex;gap:4px;z-index:3}
-        .kartu-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);border:none;cursor:pointer;padding:0}
-        .kartu-dot.active{background:#ff0055;width:14px;border-radius:3px}
-        .kartu-info{padding:15px}
-        .kartu-info h3{margin-bottom:8px;color:#fff}
-        .info-stok{font-size:14px;margin:8px 0;color:#4ec96e}
-        .info-stok.habis{color:#ff4444}
-        .info-stok.kunci{color:#ff8800}
-        .ukuran{margin:10px 0}
-        .ukuran select{width:100%;padding:8px;background:#222;color:white;border:1px solid #333;border-radius:6px}
-        .ukuran select:disabled{opacity:.5;cursor:not-allowed}
-        .harga{font-size:20px;font-weight:bold;color:#ff0055;margin:12px 0}
-        .jumlah-group{display:flex;align-items:center;gap:10px;margin:15px 0}
-        .jumlah-btn{width:36px;height:36px;background:#222;border:1px solid #444;color:white;font-size:18px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center}
-        .jumlah-btn:disabled{opacity:.4;cursor:not-allowed}
-        .jumlah-btn:not(:disabled):hover{background:#ff0055;border-color:#ff0055}
-        .jumlah-input{width:50px;height:36px;text-align:center;background:#1a1a1a;border:1px solid #333;color:white;border-radius:6px;font-size:16px}
-        .jumlah-input:disabled{opacity:.4;cursor:not-allowed}
-        .btn-cart{width:100%;background:#ff0055;border:none;color:white;padding:12px;border-radius:8px;font-weight:bold;cursor:pointer;transition:.2s}
-        .btn-cart:disabled{background:#444;cursor:not-allowed;color:#999}
-        .btn-cart:not(:disabled):hover{background:#ff3377}
-        #keranjang-list{margin:20px 0}
-        .item-keranjang{background:#111;padding:15px;border-radius:10px;margin-bottom:15px;border:1px solid #222;display:flex;gap:15px;align-items:flex-start}
-        .foto-keranjang{width:80px;height:80px;border-radius:8px;object-fit:cover;background:#000}
-        .info-item{flex:1}
-        .info-item strong{color:#fff;font-size:16px}
-        .info-item p{color:#aaa;font-size:14px;margin:4px 0}
-        .hapus-btn{background:none;border:none;color:#ff4444;font-size:14px;cursor:pointer;margin-top:8px}
-        .hapus-btn:hover{color:#f00;text-decoration:underline}
-        .kotak-diskon{background:#111;border:1px solid #222;border-radius:10px;padding:15px;margin:20px 0}
-        .kotak-diskon input{width:100%;padding:12px;background:#0a0a0a;border:1px solid #333;border-radius:6px;color:white;font-size:15px;margin-bottom:10px;text-transform:uppercase}
-        .btn-diskon{background:#ff9500;border:none;padding:10px 18px;border-radius:6px;color:black;font-weight:bold;cursor:pointer}
-        .btn-diskon:hover{background:#ffb340}
-        .pesan-diskon{font-size:14px;margin-top:8px}
-        .berhasil{color:#4ec96e}
-        .gagal{color:#ff4444}
-        .rincian-harga{background:#0f0f0f;padding:15px;border-radius:8px;margin:15px 0;border:1px solid #222}
-        .baris-harga{display:flex;justify-content:space-between;padding:6px 0;color:#ccc;font-size:15px}
-        .baris-harga.total{font-size:19px;font-weight:bold;color:#ff0055;border-top:1px solid #222;padding-top:10px}
-        .form-group{margin:12px 0}
-        .form-group input,.form-group textarea{width:100%;padding:12px;background:#111;border:1px solid #333;border-radius:6px;color:white;font-size:15px}
-        .btn-checkout{background:#25d366;border:none;width:100%;padding:14px;border-radius:8px;color:white;font-size:16px;font-weight:bold;cursor:pointer}
-        .btn-checkout:disabled{background:#222;cursor:not-allowed}
-        #afiliasi{background:linear-gradient(135deg,#0F172A 0%,#1E1B4B 100%);margin:-20px -20px -60px -20px;padding:20px;min-height:calc(100vh - 90px)}
-        .bingkai-1{box-shadow:0 0 22px rgba(255,215,0,.5);border-color:#FFD700!important}
-        .bingkai-2{box-shadow:0 0 18px rgba(192,192,192,.5);border-color:#C0C0C0!important}
-        .bingkai-3{box-shadow:0 0 18px rgba(205,127,50,.5);border-color:#CD7F32!important}
-        footer{background:#0a0a0a;padding:30px;margin-top:60px;border-top:1px solid #222}
-        .footer-links{display:flex;flex-wrap:wrap;justify-content:center;gap:25px}
-        .footer-links a{color:#aaa;text-decoration:none}
-        .footer-links a:hover{color:#ff0055}
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riwayat Pengiriman - TNXUS CLUB</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,sans-serif}
+    :root{--brand:#111;--accent:#d4af37;--line:#e0e0e0;--success:#2e7d32}
+    body{background:#f8f7f4;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .container{background:#fff;padding:32px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.06);width:100%;max-width:440px}
+    h2{text-align:center;color:var(--brand);margin-bottom:24px;font-weight:600}
+    .input-group{margin-bottom:20px}
+    label{display:block;margin-bottom:8px;color:#444;font-size:14px}
+    input{width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:8px;font-size:15px}
+    button{width:100%;padding:13px;background:var(--brand);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;transition:background .2s}
+    button:hover{background:#333}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:999}
+    .modal.active{display:flex}
+    .modal-box{background:#fff;padding:28px;border-radius:12px;width:100%;max-width:360px}
+    .modal-box h3{margin-bottom:16px;text-align:center}
+    .pin-inputs{display:flex;gap:10px;justify-content:center;margin:20px 0}
+    .pin-inputs input{width:50px;height:56px;text-align:center;font-size:22px;padding:0;border:1px solid #ddd;border-radius:8px}
+    .btn-group{display:flex;gap:10px;margin-top:10px}
+    .btn-group button{flex:1}
+    .btn-cancel{background:#eee;color:#333}
+    .btn-cancel:hover{background:#ddd}
+    
+    /* === TIMELINE RIWAYAT === */
+    .hasil-wrapper{display:none;margin-top:24px}
+    .hasil-wrapper.show{display:block}
+    .resi-header{background:#f5f5f5;padding:14px;border-radius:8px;margin-bottom:20px}
+    .resi-header p{font-size:14px;color:#555}
+    .resi-header strong{color:var(--brand);font-size:16px}
+    .timeline{position:relative;padding-left:28px}
+    .timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--line)}
+    .timeline-item{position:relative;margin-bottom:20px}
+    .timeline-dot{position:absolute;left:-28px;top:4px;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--line)}
+    .timeline-item.terkini .timeline-dot{border-color:var(--accent);background:var(--accent);box-shadow:0 0 0 4px rgba(212,175,55,.15)}
+    .timeline-item.selesai .timeline-dot{border-color:var(--success);background:var(--success)}
+    .timeline-date{font-size:13px;color:#888;margin-bottom:3px}
+    .timeline-loc{font-weight:600;color:var(--brand);font-size:15px}
+    .timeline-desc{font-size:14px;color:#555;margin-top:2px;line-height:1.5}
+    
+    .error{color:#d32f2f;margin-top:12px;font-size:14px;text-align:center}
+    .loading{text-align:center;margin-top:12px;color:#555;display:none}
+  </style>
 </head>
 <body>
 
-<div class="top-notice">PREMIUM HIGH QUALITY 100% ORIGINAL</div>
-<div class="header-buttons">
-    <button class="btn-header" onclick="tampilkanMenu()">MENU</button>
-    <button class="btn-header" onclick="tampilkanHalaman('keranjang')">KERANJANG (<span id="jumlah-keranjang">0</span>)</button>
-</div>
-<div id="sideMenu" class="side-menu">
-    <a href="#" onclick="tampilkanHalaman('beranda');return false;">BERANDA</a>
-    <a href="#" onclick="tampilkanHalaman('produk');return false;">PRODUK & BRAND</a>
-    <a href="#" onclick="tampilkanHalaman('aksesoris');return false;">AKSESORIS</a>
-    <a href="#" onclick="tampilkanHalaman('afiliasi');return false;" class="afiliasi-link">⭐ PERINGKAT AFILIASI</a>
-</div>
-
-<main>
-    <!-- BERANDA -->
-    <section id="beranda" class="page active">
-        <div class="box-logo"><video autoplay loop muted playsinline><source src="https://raw.githubusercontent.com/tnxusclub/ina/main/video-logo.mp4" type="video/mp4"></video></div>
-        <h1>TNXUS CLUB</h1><p class="desc">Kaos Premium • Bahan Berkualitas • Desain Eksklusif</p>
-        <div class="box-slider">
-            <div class="slides">
-                <div class="slide"><img class="slide-img" src="https://raw.githubusercontent.com/tnxusclub/ina/main/foto1.jpeg" alt="Foto 1" loading="lazy"></div>
-                <div class="slide"><img class="slide-img" src="https://raw.githubusercontent.com/tnxusclub/ina/main/foto2.jpeg" alt="Foto 2" loading="lazy"></div>
-                <div class="slide"><img class="slide-img" src="https://raw.githubusercontent.com/tnxusclub/ina/main/foto3.jpeg" alt="Foto 3" loading="lazy"></div>
-            </div>
-            <div class="slider-dots"></div>
-        </div>
-        <h2 style="text-align:center;margin:30px 0;color:#fff;">⏳ PRODUK PRE ORDER</h2>
-        <div class="timer-wrapper" id="wadah-timer">
-            <div class="timer-label-header">WAKTU TERSISA</div>
-            <div class="preorder-timer">
-                <div class="timer-bagian"><span id="d">00</span><div class="timer-label">Hari</div></div>
-                <div class="timer-bagian"><span id="h">00</span><div class="timer-label">Jam</div></div>
-                <div class="timer-bagian"><span id="m">00</span><div class="timer-label">Menit</div></div>
-                <div class="timer-bagian"><span id="s">00</span><div class="timer-label">Detik</div></div>
-            </div>
-            <div class="status-timer" id="status-timer">BERJALAN</div>
-        </div>
-        <div class="produk-grid">
-            <div class="kartu-produk" data-nama="Kaos TNXUS Edisi Special" data-tipe="preorder">
-                <div class="kartu-media">
-                    <span class="timer-label">PRE ORDER</span>
-                    <span class="stok-label">Stok: <span class="stok-val">—</span></span>
-                    <div class="kartu-slides">
-                        <div class="kartu-slide"><img class="kartu-slide-img" src="https://raw.githubusercontent.com/tnxusclub/ina/main/po1.jpeg" alt="Produk" loading="lazy"></div>
-                        <div class="kartu-slide"><img class="kartu-slide-img" src="https://raw.githubusercontent.com/tnxusclub/ina/main/foto2.jpeg" alt="Produk" loading="lazy"></div>
-                    </div>
-                    <div class="kartu-dots"></div>
-                </div>
-                <div class="kartu-info">
-                    <h3>Kaos TNXUS Edisi Special</h3>
-                    <p class="desc">Katun 24s • Sablon DTF</p>
-                    <p class="info-stok">✅ Tersedia: <span class="stok-val">—</span> pcs</p>
-                    <div class="ukuran"><select onchange="gantiHarga(this)"><option value="95000">S - Rp95.000</option><option value="100000">M - Rp100.000</option><option value="105000">L - Rp105.000</option><option value="110000">XL - Rp110.000</option></select></div>
-                    <div class="harga">Rp<span>95.000</span></div>
-                    <div class="jumlah-group"><button class="jumlah-btn" onclick="ubahJumlah(this,-1)">−</button><input type="number" class="jumlah-input" value="1" min="1" readonly><button class="jumlah-btn" onclick="ubahJumlah(this,1)">+</button></div>
-                    <button class="btn-cart" onclick="tambahKeKeranjang('Kaos TNXUS Edisi Special',this,'https://raw.githubusercontent.com/tnxusclub/ina/main/po1.jpeg')">+ Keranjang</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- PRODUK -->
-    <section id="produk" class="page">
-        <h1>PRODUK & BRAND</h1>
-        <h2 style="margin:40px 0 20px;color:#fff;">PRE ORDER</h2>
-        <div class="produk-grid">
-            <div class="kartu-produk" data-nama="Kaos TNXUS PO 01" data-tipe="preorder">
-                <div class="kartu-media">
-                    <span class="timer-label">PRE ORDER</span>
-                    <span class="stok-label">Stok: <span class="stok-val">—</span></span>
-                    <div class="kartu-slides"><div class="kartu-slide"><img class="kartu-slide-img" src="https://raw.githubusercontent.com/tnxusclub/ina/main/po1.jpeg" alt="PO" loading="lazy"></div></div>
-                    <div class="kartu-dots"></div>
-                </div>
-                <div class="kartu-info">
-                    <h3>Kaos TNXUS PO 01</h3><p class="desc">Bahan Tebal Nyaman</p>
-                    <p class="info-stok">✅ Tersedia: <span class="stok-val">—</span> pcs</p>
-                    <div class="ukuran"><select onchange="gantiHarga(this)"><option value="90000">S - Rp90.000</option><option value="95000">M - Rp95.000</option><option value="100000">L - Rp100.000</option></select></div>
-                    <div class="harga">Rp<span>90.000</span></div>
-                    <div class="jumlah-group"><button class="jumlah-btn" onclick="ubahJumlah(this,-1)">−</button><input type="number" class="jumlah-input" value="1" min="1" readonly><button class="jumlah-btn" onclick="ubahJumlah(this,1)">+</button></div>
-                    <button class="btn-cart" onclick="tambahKeKeranjang('Kaos TNXUS PO 01',this,'https://raw.githubusercontent.com/tnxusclub/ina/main/po1.jpeg')">+ Keranjang</button>
-                </div>
-            </div>
-        </div>
-        <h2 style="margin:60px 0 20px;color:#fff;">READY STOCK</h2>
-        <div class="produk-grid">
-            <div class="kartu-produk" data-nama="Kaos TNXUS Basic" data-tipe="biasa">
-                <div class="kartu-media">
-                    <span class="stok-label">Stok: <span class="stok-val">—</span></span>
-                    <div class="kartu-slides">
-                        <div class="kartu-slide"><img class="kartu-slide-img" src="https://raw.githubusercontent.com/tnxusclub/ina/main/ready1.jpeg" alt="Ready" loading="lazy"></div>
-                        <div class="kartu-slide"><img class="kartu-slide-img" src="https://raw.githubusercontent.com/tnxusclub/ina/main/foto3.jpeg" alt="Ready" loading="lazy"></div>
-                    </div>
-                    <div class="kartu-dots"></div>
-                </div>
-                <div class="kartu-info">
-                    <h3>Kaos TNXUS Basic</h3><p class="desc">Tersedia Langsung</p>
-                    <p class="info-stok">✅ Tersedia: <span class="stok-val">—</span> pcs</p>
-                    <div class="ukuran"><select onchange="gantiHarga(this)"><option value="85000">M - Rp85.000</option><option value="90000">L - Rp90.000</option></select></div>
-                    <div class="harga">Rp<span>85.000</span></div>
-                    <div class="jumlah-group"><button class="jumlah-btn" onclick="ubahJumlah(this,-1)">−</button><input type="number" class="jumlah-input" value="1" min="1" readonly><button class="jumlah-btn" onclick="ubahJumlah(this,1)">+</button></div>
-                    <button class="btn-cart" onclick="tambahKeKeranjang('Kaos TNXUS Basic',this,'https://raw.githubusercontent.com/tnxusclub/ina/main/ready1.jpeg')">+ Keranjang</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- AKSESORIS -->
-    <section id="aksesoris" class="page">
-        <h1>AKSESORIS</h1>
-        <div class="produk-grid">
-            <div class="kartu-produk" data-nama="Topi TNXUS" data-tipe="biasa">
-                <div class="kartu-media">
-                    <span class="stok-label">Stok: <span class="stok-val">—</span></span>
-                    <div class="kartu-slides"><div class="kartu-slide"><img class="kartu-slide-img" src="https://raw.githubusercontent.com/tnxusclub/ina/main/topi.jpeg" alt="Topi" loading="lazy"></div></div>
-                    <div class="kartu-dots"></div>
-                </div>
-                <div class="kartu-info">
-                    <h3>Topi TNXUS</h3><p class="desc">Bahan Kuat & Stylish</p>
-                    <p class="info-stok">✅ Tersedia: <span class="stok-val">—</span> pcs</p>
-                    <div class="harga">Rp<span>35.000</span></div>
-                    <div class="jumlah-group"><button class="jumlah-btn" onclick="ubahJumlah(this,-1)">−</button><input type="number" class="jumlah-input" value="1" min="1" readonly><button class="jumlah-btn" onclick="ubahJumlah(this,1)">+</button></div>
-                    <button class="btn-cart" onclick="tambahKeKeranjang('Topi TNXUS',this,'https://raw.githubusercontent.com/tnxusclub/ina/main/topi.jpeg')">+ Keranjang</button>
-                </div>
-            </div>
-            <div class="kartu-produk" data-nama="Tas TNXUS" data-tipe="biasa">
-                <div class="kartu-media">
-                    <span class="stok-label">Stok: <span class="stok-val">—</span></span>
-                    <div class="kartu-slides">
-                        <div class="kartu-slide"><img class="kartu-slide-img" src="https://raw.githubusercontent.com/tnxusclub/ina/main/tas.jpeg" alt="Tas" loading="lazy"></div>
-                        <div class="kartu-slide"><img class="kartu-slide-img" src="https://raw.githubusercontent.com/tnxusclub/ina/main/foto1.jpeg" alt="Tas" loading="lazy"></div>
-                    </div>
-                    <div class="kartu-dots"></div>
-                </div>
-                <div class="kartu-info">
-                    <h3>Tas TNXUS</h3><p class="desc">Tahan Air</p>
-                    <p class="info-stok">✅ Tersedia: <span class="stok-val">—</span> pcs</p>
-                    <div class="harga">Rp<span>50.000</span></div>
-                    <div class="jumlah-group"><button class="jumlah-btn" onclick="ubahJumlah(this,-1)">−</button><input type="number" class="jumlah-input" value="1" min="1" readonly><button class="jumlah-btn" onclick="ubahJumlah(this,1)">+</button></div>
-                    <button class="btn-cart" onclick="tambahKeKeranjang('Tas TNXUS',this,'https://raw.githubusercontent.com/tnxusclub/ina/main/tas.jpeg')">+ Keranjang</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- AFILIASI -->
-    <section id="afiliasi" class="page">
-        <header class="pt-12 pb-8 text-center"><h1 class="font-bold text-white mb-2">🏆 Papan Peringkat Afiliasi</h1><p class="text-slate-300">Hanya 20 Terbaik • Nama Disensor</p></header>
-        <main class="max-w-3xl mx-auto px-4 pb-16"><div id="daftar-peringkat" class="space-y-3"></div></main>
-        <footer class="text-center text-slate-500 text-sm py-8">Sistem Afiliasi Toko Kaos • Semarang</footer>
-        <script>
-            const daftarPengguna = [
-                {no:1,nama:"Budi Santoso",poin:18500,foto:"https://i.pravatar.cc/150?img=11"},
-                {no:2,nama:"Siti Aminah",poin:17200,foto:"https://i.pravatar.cc/150?img=5"},
-                {no:3,nama:"Andi Wijaya",poin:16800,foto:"https://i.pravatar.cc/150?img=3"},
-                {no:4,nama:"Dewi Lestari",poin:14500,foto:"https://i.pravatar.cc/150?img=9"},
-                {no:5,nama:"Eko Prasetyo",poin:13900,foto:"https://i.pravatar.cc/150?img=12"},
-                {no:6,nama:"Fani Oktavia",poin:12700,foto:"https://i.pravatar.cc/150?img=15"},
-                {no:7,nama:"Galih Nugroho",poin:11500,foto:"https://i.pravatar.cc/150?img=18"},
-                {no:8,nama:"Hani Rahmawati",poin:10200,foto:"https://i.pravatar.cc/150?img=22"},
-                {no:9,nama:"Iwan Setiawan",poin:9800,foto:"https://i.pravatar.cc/150?img=25"},
-                {no:10,nama:"Juli Handayani",poin:9100,foto:"https://i.pravatar.cc/150?img=28"},
-                {no:11,nama:"Kiki Amalia",poin:8700,foto:"https://i.pravatar.cc/150?img=31"},
-                {no:12,nama:"Lukman Hakim",poin:8200,foto:"https://i.pravatar.cc/150?img=33"},
-                {no:13,nama:"Maya Sari",poin:7900,foto:"https://i.pravatar.cc/150?img=35"},
-                {no:14,nama:"Nando Firmansyah",poin:7400,foto:"https://i.pravatar.cc/150?img=38"},
-                {no:15,nama:"Oki Rahmat",poin:6800,foto:"https://i.pravatar.cc/150?img=40"},
-                {no:16,nama:"Putri Wulandari",poin:6200,foto:"https://i.pravatar.cc/150?img=42"},
-                {no:17,nama:"Qori Aini",poin:5700,foto:"https://i.pravatar.cc/150?img=44"},
-                {no:18,nama:"Riko Saputra",poin:5100,foto:"https://i.pravatar.cc/150?img=46"},
-                {no:19,nama:"Sari Dewi",poin:4600,foto:"https://i.pravatar.cc/150?img=48"},
-                {no:20,nama:"Tio Pratama",poin:4200,foto:"https://i.pravatar.cc/150?img=50"}
-            ];
-            function sensorNama(nama){nama=nama.trim();if(nama.length<=2)return nama;return nama[0]+'*'.repeat(Math.max(8,nama.length-2))+nama[nama.length-1]}
-            daftarPengguna.sort((a,b)=>b.poin-a.poin);
-            const wadah=document.getElementById('daftar-peringkat');
-            daftarPengguna.slice(0,20).forEach((orang,idx)=>{
-                const no=idx+1;let kelas='bg-kartu border border-slate-700 rounded-xl p-4 flex items-center gap-4 kartu-peringkat',rankClass='',mahkota='';
-                if(no===1){kelas+=' bingkai-1';rankClass='bg-rank1';mahkota='👑'}
-                else if(no===2){kelas+=' bingkai-2';rankClass='bg-rank2';mahkota='👑'}
-                else if(no===3){kelas+=' bingkai-3';rankClass='bg-rank3';mahkota='👑'}
-                wadah.innerHTML+=`<div class="${kelas}"><div class="w-10 text-center font-bold text-lg ${no<=3?'text-white':'text-slate-400'}">${no}</div><div class="relative"><div class="${rankClass||'bg-slate-500'} p-1 rounded-full"><img src="${orang.foto}" class="w-12 h-12 rounded-full object-cover" loading="lazy"></div><span class="absolute -top-3 left-1/2 -translate-x-1/2 text-2xl">${mahkota}</span></div><div class="flex-grow"><h3 class="font-semibold text-white">${sensorNama(orang.nama)}</h3></div><div class="text-right"><div class="text-xl font-bold text-white">${orang.poin.toLocaleString()}</div><div class="text-xs text-slate-400">Poin</div></div></div>`;
-            });
-        </script>
-    </section>
-
-    <!-- KERANJANG -->
-    <section id="keranjang" class="page">
-        <h1>KERANJANG BELANJA</h1>
-        <p style="color:#aaa;">No. Pesanan: <strong id="no-pesanan"></strong> | <span id="tgl"></span></p>
-        <div id="keranjang-list"></div>
-        <div class="kotak-diskon">
-            <h3 style="margin-bottom:12px;color:#fff;">🎁 Kode Diskon</h3>
-            <input type="text" id="input-kode" placeholder="Masukkan kode unik...">
-            <button class="btn-diskon" onclick="cekKodeDiskon()">Gunakan</button>
-            <div id="pesan-diskon" class="pesan-diskon"></div>
-        </div>
-        <div class="rincian-harga">
-            <div class="baris-harga">Subtotal: <span id="subtotal">Rp0</span></div>
-            <div class="baris-harga" id="baris-potongan" style="display:none;">Diskon: <span id="potongan">-Rp0</span></div>
-            <div class="baris-harga total">TOTAL: <span id="total-bayar">Rp0</span></div>
-        </div>
-        <h3 style="margin:30px 0 15px;color:#fff;">DATA PENGIRIMAN</h3>
-        <div class="form-group"><input type="text" id="nama" placeholder="Nama Lengkap"></div>
-        <div class="form-group"><input type="text" id="wa" placeholder="Nomor WhatsApp"></div>
-        <div class="form-group"><textarea id="alamat" placeholder="Alamat Lengkap"></textarea></div>
-        <div class="form-group"><input type="email" id="gmail" placeholder="Email"></div>
-        <button class="btn-checkout" onclick="kirimKeWA()">✅ KIRIM KE WHATSAPP</button>
-    </section>
-</main>
-
-<footer>
-    <div class="footer-links">
-        <a href="https://instagram.com/tnxusclub" target="_blank">Instagram</a>
-        <a href="https://tiktok.com/@tnxusclub" target="_blank">TikTok</a>
-        <a href="#">Cara Order</a>
-        <a href="#">Customer Service</a>
+<div class="container">
+  <h2>Cek Riwayat Pengiriman</h2>
+  
+  <div class="input-group">
+    <label for="resi">Masukkan Nomor Resi</label>
+    <input type="text" id="resi" placeholder="Contoh: TNX123456" autocomplete="off">
+  </div>
+  
+  <button id="btnCari">Lihat Riwayat</button>
+  
+  <div class="loading" id="loadingMsg">Mengambil data perjalanan...</div>
+  <div class="error" id="errorMsg"></div>
+  
+  <!-- Hasil Riwayat -->
+  <div class="hasil-wrapper" id="hasil">
+    <div class="resi-header">
+      <p>Nomor Resi</p>
+      <strong id="noResiTampil"></strong>
     </div>
-</footer>
+    <div class="timeline" id="timelineList">
+      <!-- Diisi otomatis lewat JS -->
+    </div>
+  </div>
+</div>
+
+<!-- Popup PIN 4 Digit -->
+<div class="modal" id="modalPin">
+  <div class="modal-box">
+    <h3>Konfirmasi Kode</h3>
+    <p style="text-align:center;color:#666;font-size:14px">Masukkan kode 4 digit yang diberikan</p>
+    <div class="pin-inputs">
+      <input type="text" maxlength="1" class="pin-box" inputmode="numeric">
+      <input type="text" maxlength="1" class="pin-box" inputmode="numeric">
+      <input type="text" maxlength="1" class="pin-box" inputmode="numeric">
+      <input type="text" maxlength="1" class="pin-box" inputmode="numeric">
+    </div>
+    <div class="error" id="pinError"></div>
+    <div class="btn-group">
+      <button class="btn-cancel" id="btnBatal">Batal</button>
+      <button id="btnKonfirmasi">Lihat Data</button>
+    </div>
+  </div>
+</div>
 
 <script>
-// ==================================================
-// 🔗 URL GOOGLE APPS SCRIPT — SUDAH DIISI BENAR
-// ==================================================
-const URL_WEBAPP = "https://script.google.com/macros/s/AKfycbyhnEcjXWipsSKnDhAQ9yOdRY0QUFSMnCdBvZ_wAUsWOdtpUy7fY4hPeQh-kyTVHAxe/exec";
+// === GANTI DENGAN URL APPS SCRIPT KAMU ===
+const API_URL = "https://script.google.com/macros/s/AKfycbzirJe9zWfli3y3Eeh8ihVqPWf-33AcC54i91sgVyo_5xFOyUSMjgL95dBizHm6bWYPnA/exec";
+// ============================================
 
-const DAFTAR_KODE_DISKON = Object.freeze({ "TNXUS10":10000, "HEMAT5":5000, "TNXUSCLUB":20000 });
-let nilaiDiskon=0, kodeTerpakai=null, keranjang=[], poSelesai=false, stokData={};
+let dataResi = null;
+const elResi = document.getElementById('resi');
+const btnCari = document.getElementById('btnCari');
+const modalPin = document.getElementById('modalPin');
+const btnBatal = document.getElementById('btnBatal');
+const btnKonfirmasi = document.getElementById('btnKonfirmasi');
+const hasil = document.getElementById('hasil');
+const errorMsg = document.getElementById('errorMsg');
+const loadingMsg = document.getElementById('loadingMsg');
+const pinBoxes = document.querySelectorAll('.pin-box');
+const timelineList = document.getElementById('timelineList');
+const noResiTampil = document.getElementById('noResiTampil');
 
-// ==================================================
-// ⏳ UBAH TANGGAL BERAKHIR PRE-ORDER
-// ==================================================
-const TANGGAL_AKHIR_PO = new Date("2026-09-15 23:59:59").getTime();
+// Fokus PIN
+pinBoxes.forEach((box, idx) => {
+  box.addEventListener('input', () => {
+    if (box.value && idx < 3) pinBoxes[idx + 1].focus();
+  });
+  box.addEventListener('keydown', (e) => {
+    if (e.key === 'Backspace' && !box.value && idx > 0) pinBoxes[idx - 1].focus();
+  });
+});
 
-// === SLIDER GESER ===
-class SliderUsap {
-    constructor(e){this.wadah=e;this.slides=this.wadah.querySelector('.slides,.kartu-slides');this.wadahTitik=this.wadah.querySelector('.slider-dots,.kartu-dots');this.indeks=0;this.jumlah=this.slides?this.slides.querySelectorAll('.slide,.kartu-slide').length:0;this.sedangGeser=false;this.awalX=0;this.bergerakX=0;this.lebarSlide=0;this.jumlah>0&&(this.lebarSlide=this.wadah.offsetWidth,this.buatTitik(),this.aturEventSentuh(),this.aturEventMouse(),this.perbarui(!1))}
-    buatTitik(){for(let i=0;i<this.jumlah;i++){const t=document.createElement('button');t.className=this.wadah.classList.contains('box-slider')?'dot':'kartu-dot',t.style.border='none',t.style.background='rgba(255,255,255,.3)',t.style.padding='0',t.style.cursor='pointer',t.addEventListener('click',()=>this.pindahKe(i)),this.wadahTitik.appendChild(t)}}
-    aturEventSentuh(){this.wadah.addEventListener('touchstart',e=>{this.awalX=e.touches[0].clientX,this.sedangGeser=!0,this.slides.style.transition='none',this.lebarSlide=this.wadah.offsetWidth},{passive:!0}),this.wadah.addEventListener('touchmove',e=>{if(!this.sedangGeser)return;this.bergerakX=e.touches[0].clientX-this.awalX;const t=-this.indeks*100+(this.bergerakX/this.lebarSlide)*100;this.slides.style.transform=`translateX(${t}%)`},{passive:!0}),this.wadah.addEventListener('touchend',()=>this.selesaiGeser(),{passive:!0})}
-    aturEventMouse(){this.wadah.addEventListener('mousedown',e=>{e.preventDefault(),this.awalX=e.clientX,this.sedangGeser=!0,this.slides.style.transition='none',this.lebarSlide=this.wadah.offsetWidth,this.wadah.style.cursor='grabbing'}),document.addEventListener('mousemove',e=>{if(!this.sedangGeser)return;this.bergerakX=e.clientX-this.awalX;const t=-this.indeks*100+(this.bergerakX/this.lebarSlide)*100;this.slides.style.transform=`translateX(${t}%)`}),document.addEventListener('mouseup',()=>{this.sedangGeser&&(this.wadah.style.cursor='grab',this.selesaiGeser())}),this.wadah.style.cursor='grab',this.wadah.style.userSelect='none'}
-    selesaiGeser(){this.sedangGeser=!1,this.slides.style.transition='transform .3s ease-out';const e=this.lebarSlide/4;this.bergerakX<-e?this.berikutnya():this.bergerakX>e?this.sebelumnya():this.perbarui(!0),this.bergerakX=0}
-    perbarui(e=!0){e&&(this.slides.style.transition='transform .3s ease-out'),this.slides.style.transform=`translateX(-${this.indeks*100}%)`;const t=this.wadahTitik.querySelectorAll('.dot,.kartu-dot');t.forEach((e,i)=>e.classList.toggle('active',i===this.indeks))}
-    pindahKe(e){this.indeks=e,this.perbarui(!0)}
-    berikutnya(){this.indeks=(this.indeks+1)%this.jumlah,this.perbarui(!0)}
-    sebelumnya(){this.indeks=(this.indeks-1+this.jumlah)%this.jumlah,this.perbarui(!0)}
-}
-
-// === TIMER ===
-function aturTimer(){
-    const sekarang = new Date().getTime();
-    const sisa = TANGGAL_AKHIR_PO - sekarang;
-    const wadahTimer = document.getElementById('wadah-timer');
-    const statusTimer = document.getElementById('status-timer');
-
-    if(sisa <= 0){
-        poSelesai = true;
-        ['d','h','m','s'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent='00'});
-        if(wadahTimer) wadahTimer.classList.add('habis');
-        if(statusTimer){ statusTimer.textContent = "WAKTU HABIS"; statusTimer.classList.add('habis'); }
-        kunciSemuaPreOrder();
-        return;
+btnCari.addEventListener('click', async () => {
+  const resiVal = elResi.value.trim();
+  if (!resiVal) {
+    errorMsg.textContent = "Masukkan nomor resi terlebih dahulu";
+    return;
+  }
+  
+  errorMsg.textContent = "";
+  hasil.classList.remove('show');
+  loadingMsg.style.display = "block";
+  
+  try {
+    const res = await fetch(`${API_URL}?resi=${encodeURIComponent(resiVal)}`);
+    const json = await res.json();
+    loadingMsg.style.display = "none";
+    
+    if (!json.found) {
+      errorMsg.textContent = "Nomor resi tidak ditemukan";
+      return;
     }
+    
+    dataResi = json;
+    modalPin.classList.add('active');
+    pinBoxes[0].focus();
+    
+  } catch (err) {
+    loadingMsg.style.display = "none";
+    errorMsg.textContent = "Kesalahan jaringan, coba lagi";
+    console.error(err);
+  }
+});
 
-    poSelesai = false;
-    if(wadahTimer) wadahTimer.classList.remove('habis');
-    if(statusTimer){ statusTimer.textContent = "MASIH BERJALAN"; statusTimer.classList.remove('habis'); }
-
-    const hari = Math.floor(sisa / (1000 * 60 * 60 * 24));
-    const jam = Math.floor((sisa % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const menit = Math.floor((sisa % (1000 * 60 * 60)) / (1000 * 60));
-    const detik = Math.floor((sisa % (1000 * 60)) / 1000);
-    const f = n => n < 10 ? '0' + n : n;
-
-    ['d','h','m','s'].forEach((id,i)=>{
-        const val=[hari,jam,menit,detik][i];
-        const el=document.getElementById(id);if(el)el.textContent=f(val);
+btnKonfirmasi.addEventListener('click', () => {
+  const pin = Array.from(pinBoxes).map(b => b.value).join('');
+  document.getElementById('pinError').textContent = "";
+  
+  if (pin.length !== 4) {
+    document.getElementById('pinError').textContent = "Masukkan 4 digit kode";
+    return;
+  }
+  
+  if (pin === dataResi.password) {
+    // Tampilkan riwayat
+    modalPin.classList.remove('active');
+    pinBoxes.forEach(b => b.value = "");
+    
+    noResiTampil.textContent = elResi.value.trim();
+    
+    // Buat daftar riwayat
+    timelineList.innerHTML = "";
+    const total = dataResi.riwayat.length;
+    
+    dataResi.riwayat.forEach((item, index) => {
+      const isTerakhir = index === total - 1;
+      const isSelesai = item.keterangan.includes("diterima") || item.keterangan.includes("✅");
+      
+      const div = document.createElement('div');
+      div.className = `timeline-item ${isTerakhir ? 'terkini' : ''} ${isSelesai ? 'selesai' : ''}`;
+      div.innerHTML = `
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">${item.tanggal} • ${item.waktu}</div>
+        <div class="timeline-loc">${item.lokasi}</div>
+        <div class="timeline-desc">${item.keterangan}</div>
+      `;
+      timelineList.appendChild(div);
     });
-}
-
-function kunciSemuaPreOrder(){
-    document.querySelectorAll('.kartu-produk[data-tipe="preorder"]').forEach(e=>{
-        e.classList.add('kunci');
-        const t=e.querySelector('.btn-cart'),n=e.querySelector('.jumlah-input'),o=e.querySelectorAll('.jumlah-btn'),s=e.querySelector('select'),i=e.querySelector('.info-stok');
-        t&&(t.disabled=!0,t.textContent="WAKTU HABIS");
-        n&&(n.disabled=!0);
-        o.forEach(e=>e.disabled=!0);
-        s&&(s.disabled=!0);
-        i&&(i.innerHTML="❌ PRE ORDER TELAH BERAKHIR",i.classList.add('kunci'));
-    });
-}
-
-// === 🔄 AMBIL STOK DARI GOOGLE SHEETS — UTAMA ===
-async function ambilStokSemuaProduk(){
-    try{
-        // Tambah ?t=... agar tidak ambil data lama dari cache
-        const res = await fetch(URL_WEBAPP + "?t=" + Date.now());
-        if(!res.ok) throw new Error("Gagal terhubung ke server");
-        
-        stokData = await res.json();
-        console.log("✅ Stok terbaru dari Sheets:", stokData);
-
-        // Terapkan ke semua kartu produk
-        document.querySelectorAll('.kartu-produk').forEach(kartu=>{
-            const nama = kartu.dataset.nama?.trim() || '';
-            const stok = stokData[nama] ?? 0; // 0 jika tidak ditemukan
-            
-            // Update semua tampilan angka stok
-            kartu.querySelectorAll('.stok-val').forEach(e=>e.textContent=stok);
-
-            const infoStok = kartu.querySelector('.info-stok');
-            const btnBeli = kartu.querySelector('.btn-cart');
-            const inputJml = kartu.querySelector('.jumlah-input');
-            const btnJml = kartu.querySelectorAll('.jumlah-btn');
-            const selectUkuran = kartu.querySelector('select');
-
-            // Atur kondisi habis/tersedia
-            if(stok <= 0){
-                kartu.classList.add('habis');
-                infoStok&&(infoStok.innerHTML='❌ STOK HABIS',infoStok.classList.add('habis'),infoStok.classList.remove('kunci'));
-                btnBeli&&(btnBeli.disabled=!0,btnBeli.textContent='STOK HABIS');
-                inputJml&&(inputJml.disabled=!0);
-                btnJml.forEach(e=>e.disabled=!0);
-                selectUkuran&&(selectUkuran.disabled=!0);
-            }else{
-                kartu.classList.remove('habis');
-                infoStok&&(infoStok.innerHTML=`✅ Tersedia: ${stok} pcs`,infoStok.classList.remove('habis','kunci'));
-                
-                // Buka kembali jika bukan pre-order yang sudah tutup
-                if(!poSelesai && !kartu.classList.contains('kunci')){
-                    btnBeli&&(btnBeli.disabled=!1,btnBeli.textContent='+ Keranjang');
-                    inputJml&&(inputJml.disabled=!1);
-                    btnJml.forEach(e=>e.disabled=!1);
-                    selectUkuran&&(selectUkuran.disabled=!1);
-                }
-            }
-        });
-    }catch(e){
-        console.error('❌ Gagal ambil stok:', e);
-    }
-}
-
-// === KURANGI STOK SAAT CHECKOUT ===
-async function kurangiStok(){
-    for(const item of keranjang){
-        try{
-            const formData = new FormData();
-            formData.append("nama_produk", item.nama);
-            formData.append("kurangi", item.jumlah);
-
-            const res = await fetch(URL_WEBAPP, {
-                method: "POST",
-                body: formData
-            });
-            
-            const hasil = await res.json();
-            if(!hasil.sukses){
-                alert(`❌ ${item.nama}: ${hasil.pesan}`);
-                await ambilStokSemuaProduk(); // Refresh stok terbaru
-                return false;
-            }
-        }catch(e){
-            alert(`❌ Gagal update stok: ${e}`);
-            await ambilStokSemuaProduk();
-            return false;
-        }
-    }
-    return true;
-}
-
-// === FUNGSI UMUM ===
-function tampilkanMenu(){document.getElementById('sideMenu').classList.toggle('active')}
-function tampilkanHalaman(e){document.querySelectorAll('.page').forEach(t=>t.classList.remove('active')),document.getElementById(e).classList.add('active'),document.getElementById('sideMenu').classList.remove('active'),window.scrollTo(0,0)}
-function gantiHarga(e){const t=e.closest('.kartu-info');t.querySelector('.harga span').textContent=parseInt(e.value).toLocaleString('id-ID')}
-function ubahJumlah(e,t){
-    const kartu=e.closest('.kartu-produk');
-    if(kartu.classList.contains('kunci'))return;
-    const nama=kartu.dataset.nama?.trim();
-    const stokMaksimal=stokData[nama]??999;
-    const input=kartu.querySelector('.jumlah-input');
-    let val=parseInt(input.value)+t;
-    val=Math.max(1,Math.min(val,stokMaksimal));
-    input.value=val;
-}
-function tambahKeKeranjang(nama,tombol,foto){
-    const kartu=tombol.closest('.kartu-produk');
-    const stok=stokData[nama]??0;
     
-    if(kartu.classList.contains('kunci')||poSelesai)return void alert('❌ Sudah tidak bisa dipesan!');
-    if(stok<=0)return void alert('❌ Stok habis!');
+    hasil.classList.add('show');
     
-    const ukuranEl=kartu.querySelector('select');
-    const ukuranTeks=ukuranEl.options[ukuranEl.selectedIndex].text;
-    const harga=parseInt(ukuranEl.value);
-    const jumlah=parseInt(kartu.querySelector('.jumlah-input').value);
-    
-    if(jumlah>stok)return void alert(`⚠️ Stok hanya tersisa ${stok} pcs!`);
-    
-    const ada=keranjang.find(i=>i.nama===nama&&i.ukuran===ukuranTeks);
+  } else {
+    document.getElementById('pinError').textContent = "Kode salah, coba lagi";
+    pinBoxes.forEach(b => b.value = "");
+    pinBoxes[0].focus();
+  }
+});
 
-    if(ada){
-        if(ada.jumlah + jumlah > stok) return void alert('⚠️ Jumlah melebihi stok yang tersedia!');
-        ada.jumlah += jumlah;
-    } else {
-        keranjang.push({nama, ukuran: ukuranTeks, harga, jumlah, foto});
-    }
-    perbaruiTampilanKeranjang();
-    alert(`✅ Berhasil ditambahkan:\n${nama}\n${ukuranTeks} x${jumlah}`);
-}
+btnBatal.addEventListener('click', () => {
+  modalPin.classList.remove('active');
+  pinBoxes.forEach(b => b.value = "");
+  dataResi = null;
+});
 
-function perbaruiTampilanKeranjang(){
-    const wadah = document.getElementById('keranjang-list');
-    const jumlahKeranjang = document.getElementById('jumlah-keranjang');
-    let subtotal = 0;
-    const totalItem = keranjang.reduce((total, item) => total + item.jumlah, 0);
-    jumlahKeranjang.textContent = totalItem;
-    wadah.innerHTML = '';
-
-    if(keranjang.length === 0){
-        wadah.innerHTML = '<p style="color:#aaa;text-align:center;padding:30px;">🛒 Keranjang belanja kosong</p>';
-    } else {
-        keranjang.forEach((brg, indeks) => {
-            subtotal += brg.harga * brg.jumlah;
-            wadah.innerHTML += `
-            <div class="item-keranjang">
-                <img src="${brg.foto}" alt="${brg.nama}" class="foto-keranjang" loading="lazy">
-                <div class="info-item">
-                    <strong>${brg.nama}</strong>
-                    <p>Ukuran: ${brg.ukuran}</p>
-                    <p>Harga: Rp${brg.harga.toLocaleString('id-ID')}</p>
-                    <p>Jumlah: ${brg.jumlah}</p>
-                    <p>Subtotal: <strong>Rp${(brg.harga * brg.jumlah).toLocaleString('id-ID')}</strong></p>
-                    <button class="hapus-btn" onclick="hapusDariKeranjang(${indeks})">🗑️ Hapus</button>
-                </div>
-            </div>`;
-        });
-    }
-
-    document.getElementById('subtotal').textContent = `Rp${subtotal.toLocaleString('id-ID')}`;
-    const barisPotongan = document.getElementById('baris-potongan');
-    const tampilPotongan = document.getElementById('potongan');
-    const totalBayar = document.getElementById('total-bayar');
-
-    if(nilaiDiskon > 0 && kodeTerpakai){
-        barisPotongan.style.display = 'flex';
-        tampilPotongan.textContent = `-Rp${nilaiDiskon.toLocaleString('id-ID')}`;
-    } else {
-        barisPotongan.style.display = 'none';
-        nilaiDiskon = 0;
-    }
-
-    const total = Math.max(0, subtotal - nilaiDiskon);
-    totalBayar.textContent = `Rp${total.toLocaleString('id-ID')}`;
-}
-
-function hapusDariKeranjang(indeks){
-    keranjang.splice(indeks, 1);
-    perbaruiTampilanKeranjang();
-}
-
-function cekKodeDiskon(){
-    const input = document.getElementById('input-kode').value.trim().toUpperCase();
-    const pesan = document.getElementById('pesan-diskon');
-    nilaiDiskon = 0;
-    kodeTerpakai = null;
-
-    if(!input){
-        pesan.textContent = "⚠️ Masukkan kode diskon terlebih dahulu!";
-        pesan.className = "pesan-diskon gagal";
-        perbaruiTampilanKeranjang();
-        return;
-    }
-
-    if(DAFTAR_KODE_DISKON.hasOwnProperty(input)){
-        nilaiDiskon = DAFTAR_KODE_DISKON[input];
-        kodeTerpakai = input;
-        pesan.textContent = `✅ Berhasil! Diskon Rp${nilaiDiskon.toLocaleString('id-ID')}`;
-        pesan.className = "pesan-diskon berhasil";
-    } else {
-        pesan.textContent = "❌ Kode tidak valid atau sudah kadaluarsa!";
-        pesan.className = "pesan-diskon gagal";
-    }
-    perbaruiTampilanKeranjang();
-}
-
-async function kirimKeWA(){
-    const nama = document.getElementById('nama').value.trim();
-    const wa = document.getElementById('wa').value.trim();
-    const alamat = document.getElementById('alamat').value.trim();
-    const gmail = document.getElementById('gmail').value.trim();
-    const noPesanan = document.getElementById('no-pesanan').textContent;
-    const tglPesanan = document.getElementById('tgl').textContent;
-
-    if(keranjang.length === 0){ alert("🛒 Keranjang masih kosong!"); return; }
-    if(!nama || !wa || !alamat){ alert("⚠️ Isi Nama, No. WA & Alamat Lengkap!"); return; }
-
-    const berhasil = await kurangiStok();
-    if(!berhasil) return;
-
-    let teks = `🛒 *PESANAN BARU TNXUS CLUB*%0A`;
-    teks += `━━━━━━━━━━━━━━━━━━━━%0A`;
-    teks += `📌 No. Pesanan: ${noPesanan}%0A`;
-    teks += `📅 Tanggal: ${tglPesanan}%0A`;
-    teks += `━━━━━━━━━━━━━━━━━━━━%0A`;
-    teks += `👤 Nama: ${nama}%0A`;
-    teks += `📞 WA: ${wa}%0A`;
-    teks += `📍 Alamat: ${alamat.replace(/\n/g, "%0A")}%0A`;
-    if(gmail) teks += `✉️ Email: ${gmail}%0A`;
-    teks += `━━━━━━━━━━━━━━━━━━━━%0A`;
-    teks += `📦 DAFTAR PESANAN:%0A`;
-
-    let subtotal = 0;
-    keranjang.forEach(item => {
-        const sub = item.harga * item.jumlah;
-        subtotal += sub;
-        teks += `• ${item.nama}%0A  ${item.ukuran} x${item.jumlah}%0A  Rp${sub.toLocaleString('id-ID')}%0A`;
-    });
-
-    teks += `━━━━━━━━━━━━━━━━━━━━%0A`;
-    teks += `💳 Subtotal: Rp${subtotal.toLocaleString('id-ID')}%0A`;
-    if(kodeTerpakai) teks += `🎁 Diskon [${kodeTerpakai}]: -Rp${nilaiDiskon.toLocaleString('id-ID')}%0A`;
-    const total = Math.max(0, subtotal - nilaiDiskon);
-    teks += `💰 TOTAL BAYAR: *Rp${total.toLocaleString('id-ID')}*%0A`;
-    teks += `━━━━━━━━━━━━━━━━━━━━%0A`;
-    teks += `🙏 Terima Kasih Telah Membeli!%0A`;
-    teks += `Silakan lakukan pembayaran sesuai nominal di atas.`;
-
-    window.open(`https://wa.me/6281234567890?text=${encodeURIComponent(teks)}`, '_blank');
-
-    keranjang = [];
-    perbaruiTampilanKeranjang();
-    await ambilStokSemuaProduk();
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('no-pesanan').textContent = 'TNX' + Date.now();
-    document.getElementById('tgl').textContent = new Date().toLocaleString('id-ID');
-
-    aturTimer();
-    setInterval(aturTimer, 1000);
-
-    ambilStokSemuaProduk();
-    setInterval(ambilStokSemuaProduk, 10000);
-
-    const sliderUtama = document.querySelector('.box-slider');
-    if(sliderUtama) new SliderUsap(sliderUtama);
-    document.querySelectorAll('.kartu-media').forEach(el => new SliderUsap(el));
-
-    if(poSelesai) kunciSemuaPreOrder();
+modalPin.addEventListener('click', (e) => {
+  if (e.target === modalPin) {
+    modalPin.classList.remove('active');
+    pinBoxes.forEach(b => b.value = "");
+  }
 });
 </script>
-
 </body>
 </html>
