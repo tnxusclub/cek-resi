@@ -26,7 +26,6 @@
     .btn-cancel{background:#eee;color:#333}
     .btn-cancel:hover{background:#ddd}
     
-    /* === TIMELINE RIWAYAT === */
     .hasil-wrapper{display:none;margin-top:24px}
     .hasil-wrapper.show{display:block}
     .resi-header{background:#f5f5f5;padding:14px;border-radius:8px;margin-bottom:20px}
@@ -42,7 +41,7 @@
     .timeline-loc{font-weight:600;color:var(--brand);font-size:15px}
     .timeline-desc{font-size:14px;color:#555;margin-top:2px;line-height:1.5}
     
-    .error{color:#d32f2f;margin-top:12px;font-size:14px;text-align:center}
+    .error{color:#d32f2f;margin-top:12px;font-size:14px;text-align:center;line-height:1.5}
     .loading{text-align:center;margin-top:12px;color:#555;display:none}
   </style>
 </head>
@@ -61,19 +60,15 @@
   <div class="loading" id="loadingMsg">Mengambil data perjalanan...</div>
   <div class="error" id="errorMsg"></div>
   
-  <!-- Hasil Riwayat -->
   <div class="hasil-wrapper" id="hasil">
     <div class="resi-header">
       <p>Nomor Resi</p>
       <strong id="noResiTampil"></strong>
     </div>
-    <div class="timeline" id="timelineList">
-      <!-- Diisi otomatis lewat JS -->
-    </div>
+    <div class="timeline" id="timelineList"></div>
   </div>
 </div>
 
-<!-- Popup PIN 4 Digit -->
 <div class="modal" id="modalPin">
   <div class="modal-box">
     <h3>Konfirmasi Kode</h3>
@@ -93,9 +88,10 @@
 </div>
 
 <script>
-// === GANTI DENGAN URL APPS SCRIPT KAMU ===
-const API_URL = "https://script.google.com/macros/s/AKfycbyi50m5qlvWDGoPkMOdWcYeXdvn3tJJgNpRQJuA_4n7FwmZcaFSnLCjKM9GxDKrBzpOoQ/exec";
-// ============================================
+// ==============================================
+// GANTI URL DI BAWAH INI DENGAN URL MILIKMU
+const API_URL = "https://script.google.com/macros/s/AKfycbwdyowMy_0p1kq3W2oTXn2QsjSauUT-b_D-4arV9sEtns-ST3Oe3ZL3B6mVd6FQv7RPVA/exec";
+// ==============================================
 
 let dataResi = null;
 const elResi = document.getElementById('resi');
@@ -110,7 +106,6 @@ const pinBoxes = document.querySelectorAll('.pin-box');
 const timelineList = document.getElementById('timelineList');
 const noResiTampil = document.getElementById('noResiTampil');
 
-// Fokus PIN
 pinBoxes.forEach((box, idx) => {
   box.addEventListener('input', () => {
     if (box.value && idx < 3) pinBoxes[idx + 1].focus();
@@ -153,7 +148,7 @@ btnCari.addEventListener('click', async () => {
 });
 
 btnKonfirmasi.addEventListener('click', () => {
-  const pin = Array.from(pinBoxes).map(b => b.value).join('');
+  const pin = Array.from(pinBoxes).map(b => String(b.value).trim()).join('');
   document.getElementById('pinError').textContent = "";
   
   if (pin.length !== 4) {
@@ -161,14 +156,16 @@ btnKonfirmasi.addEventListener('click', () => {
     return;
   }
   
-  if (pin === dataResi.password) {
-    // Tampilkan riwayat
+  const pinBersih = String(dataResi.password).trim();
+  
+  console.log("PIN masuk:", pin, "| PIN sheet:", pinBersih);
+  
+  if (pin === pinBersih) {
     modalPin.classList.remove('active');
     pinBoxes.forEach(b => b.value = "");
     
     noResiTampil.textContent = elResi.value.trim();
     
-    // Buat daftar riwayat
     timelineList.innerHTML = "";
     const total = dataResi.riwayat.length;
     
@@ -190,7 +187,8 @@ btnKonfirmasi.addEventListener('click', () => {
     hasil.classList.add('show');
     
   } else {
-    document.getElementById('pinError').textContent = "Kode salah, coba lagi";
+    document.getElementById('pinError').innerHTML = 
+      `Kode salah!<br>Seharusnya: <b>${pinBersih}</b><br>Kamu masukkan: <b>${pin}</b>`;
     pinBoxes.forEach(b => b.value = "");
     pinBoxes[0].focus();
   }
