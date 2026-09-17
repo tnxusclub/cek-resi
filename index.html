@@ -1,211 +1,110 @@
 <!DOCTYPE html>
-<html lang="id">
+<html>
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Riwayat Pengiriman - TNXUS CLUB</title>
+  <title>Cek Resi</title>
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui,-apple-system,sans-serif}
-    :root{--brand:#111;--accent:#d4af37;--line:#e0e0e0;--success:#2e7d32}
-    body{background:#f8f7f4;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-    .container{background:#fff;padding:32px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.06);width:100%;max-width:440px}
-    h2{text-align:center;color:var(--brand);margin-bottom:24px;font-weight:600}
-    .input-group{margin-bottom:20px}
-    label{display:block;margin-bottom:8px;color:#444;font-size:14px}
-    input{width:100%;padding:12px 14px;border:1px solid #ddd;border-radius:8px;font-size:15px}
-    button{width:100%;padding:13px;background:var(--brand);color:#fff;border:none;border-radius:8px;font-size:15px;font-weight:500;cursor:pointer;transition:background .2s}
-    button:hover{background:#333}
-    .modal{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;padding:20px;z-index:999}
-    .modal.active{display:flex}
-    .modal-box{background:#fff;padding:28px;border-radius:12px;width:100%;max-width:360px}
-    .modal-box h3{margin-bottom:16px;text-align:center}
-    .pin-inputs{display:flex;gap:10px;justify-content:center;margin:20px 0}
-    .pin-inputs input{width:50px;height:56px;text-align:center;font-size:22px;padding:0;border:1px solid #ddd;border-radius:8px}
-    .btn-group{display:flex;gap:10px;margin-top:10px}
-    .btn-group button{flex:1}
-    .btn-cancel{background:#eee;color:#333}
-    .btn-cancel:hover{background:#ddd}
-    
-    .hasil-wrapper{display:none;margin-top:24px}
-    .hasil-wrapper.show{display:block}
-    .resi-header{background:#f5f5f5;padding:14px;border-radius:8px;margin-bottom:20px}
-    .resi-header p{font-size:14px;color:#555}
-    .resi-header strong{color:var(--brand);font-size:16px}
-    .timeline{position:relative;padding-left:28px}
-    .timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--line)}
-    .timeline-item{position:relative;margin-bottom:20px}
-    .timeline-dot{position:absolute;left:-28px;top:4px;width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid var(--line)}
-    .timeline-item.terkini .timeline-dot{border-color:var(--accent);background:var(--accent);box-shadow:0 0 0 4px rgba(212,175,55,.15)}
-    .timeline-item.selesai .timeline-dot{border-color:var(--success);background:var(--success)}
-    .timeline-date{font-size:13px;color:#888;margin-bottom:3px}
-    .timeline-loc{font-weight:600;color:var(--brand);font-size:15px}
-    .timeline-desc{font-size:14px;color:#555;margin-top:2px;line-height:1.5}
-    
-    .error{color:#d32f2f;margin-top:12px;font-size:14px;text-align:center;line-height:1.5}
-    .loading{text-align:center;margin-top:12px;color:#555;display:none}
+    *{box-sizing:border-box; font-family:Arial, sans-serif; margin:0; padding:0;}
+    body{background:#f0f4f8; padding:20px;}
+    .container{max-width:450px; margin:0 auto; background:white; padding:25px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+    h2{text-align:center; margin-bottom:20px; color:#2d3748;}
+    input{width:100%; padding:14px; margin:10px 0; border:2px solid #e2e8f0; border-radius:8px; font-size:16px; text-align:center;}
+    button{width:100%; padding:14px; background:#2b6cb0; color:white; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer;}
+    button:hover{background:#2c5282;}
+    .hasil{margin-top:20px; display:none;}
+    .hasil.tampil{display:block;}
+    .box{background:#f7fafc; padding:15px; border-radius:8px; margin-bottom:10px; border-left:4px solid #2b6cb0;}
+    .label{font-weight:bold; color:#4a5568; font-size:14px;}
+    .nilai{color:#2d3748; margin-top:4px;}
+    .status{font-weight:bold; font-size:18px; color:#2f8556;}
+    .pesan{margin-top:15px; padding:12px; border-radius:8px; text-align:center; display:none;}
+    .pesan.tampil{display:block;}
+    .berhasil{background:#f0fff4; color:#22543d;}
+    .gagal{background:#fed7d7; color:#742a2a;}
   </style>
 </head>
 <body>
-
 <div class="container">
-  <h2>Cek Riwayat Pengiriman</h2>
+  <h2>📦 Cek Status Pengiriman</h2>
+  <input type="text" id="noResi" placeholder="Masukkan Nomor Resi" autocomplete="off">
+  <button onclick="cekResi()">Cek Sekarang</button>
   
-  <div class="input-group">
-    <label for="resi">Masukkan Nomor Resi</label>
-    <input type="text" id="resi" placeholder="Contoh: TNX123456" autocomplete="off">
-  </div>
+  <div id="pesan" class="pesan"></div>
   
-  <button id="btnCari">Lihat Riwayat</button>
-  
-  <div class="loading" id="loadingMsg">Memproses data ...</div>
-  <div class="error" id="errorMsg"></div>
-  
-  <div class="hasil-wrapper" id="hasil">
-    <div class="resi-header">
-      <p>Nomor Resi</p>
-      <strong id="noResiTampil"></strong>
+  <div id="hasil" class="hasil">
+    <div class="box">
+      <div class="label">Nomor Resi</div>
+      <div class="nilai" id="hResi"></div>
     </div>
-    <div class="timeline" id="timelineList"></div>
-  </div>
-</div>
-
-<div class="modal" id="modalPin">
-  <div class="modal-box">
-    <h3>Konfirmasi Kode</h3>
-    <p style="text-align:center;color:#666;font-size:14px">Masukkan kode 4 digit yang diberikan</p>
-    <div class="pin-inputs">
-      <input type="text" maxlength="1" class="pin-box" inputmode="numeric">
-      <input type="text" maxlength="1" class="pin-box" inputmode="numeric">
-      <input type="text" maxlength="1" class="pin-box" inputmode="numeric">
-      <input type="text" maxlength="1" class="pin-box" inputmode="numeric">
+    <div class="box">
+      <div class="label">Penerima</div>
+      <div class="nilai" id="hNama"></div>
     </div>
-    <div class="error" id="pinError"></div>
-    <div class="btn-group">
-      <button class="btn-cancel" id="btnBatal">Batal</button>
-      <button id="btnKonfirmasi">Lihat Data</button>
+    <div class="box">
+      <div class="label">Alamat</div>
+      <div class="nilai" id="hAlamat"></div>
+    </div>
+    <div class="box">
+      <div class="label">Ekspedisi</div>
+      <div class="nilai" id="hEkspedisi"></div>
+    </div>
+    <div class="box">
+      <div class="label">Status</div>
+      <div class="nilai status" id="hStatus"></div>
+    </div>
+    <div class="box">
+      <div class="label">Keterangan</div>
+      <div class="nilai" id="hKet"></div>
+    </div>
+    <div class="box">
+      <div class="label">Terakhir Diperbarui</div>
+      <div class="nilai" id="hTgl"></div>
     </div>
   </div>
 </div>
 
 <script>
-// ==============================================
-// GANTI URL DI BAWAH INI DENGAN URL MILIKMU
-const API_URL = "https://script.google.com/macros/s/AKfycbx6XRFba5F_yREq6VRSMrmTR3BupPVAf_PTnsVDj6OPTnRa9eHPtzgDxeEhBbACukyjBg/exec";
-// ==============================================
+// Ganti URL dengan URL Apps Script kamu
+const URL_APPSCRIPT = "https://script.google.com/macros/s/AKfycbxJ3BDNroAqtC9mF8QIjTYOoYCafUUbFAWpqGATk6AZxqcujVXi7JuVGr60_zCsXJy0Fw/exec";
 
-let dataResi = null;
-const elResi = document.getElementById('resi');
-const btnCari = document.getElementById('btnCari');
-const modalPin = document.getElementById('modalPin');
-const btnBatal = document.getElementById('btnBatal');
-const btnKonfirmasi = document.getElementById('btnKonfirmasi');
-const hasil = document.getElementById('hasil');
-const errorMsg = document.getElementById('errorMsg');
-const loadingMsg = document.getElementById('loadingMsg');
-const pinBoxes = document.querySelectorAll('.pin-box');
-const timelineList = document.getElementById('timelineList');
-const noResiTampil = document.getElementById('noResiTampil');
-
-pinBoxes.forEach((box, idx) => {
-  box.addEventListener('input', () => {
-    if (box.value && idx < 3) pinBoxes[idx + 1].focus();
-  });
-  box.addEventListener('keydown', (e) => {
-    if (e.key === 'Backspace' && !box.value && idx > 0) pinBoxes[idx - 1].focus();
-  });
-});
-
-btnCari.addEventListener('click', async () => {
-  const resiVal = elResi.value.trim();
-  if (!resiVal) {
-    errorMsg.textContent = "Masukkan nomor resi terlebih dahulu";
+function cekResi() {
+  const noResi = document.getElementById("noResi").value.trim();
+  const pesan = document.getElementById("pesan");
+  const hasil = document.getElementById("hasil");
+  
+  pesan.classList.remove("tampil", "berhasil", "gagal");
+  hasil.classList.remove("tampil");
+  
+  if (!noResi) {
+    pesan.textContent = "Masukkan nomor resi terlebih dahulu";
+    pesan.classList.add("tampil", "gagal");
     return;
   }
   
-  errorMsg.textContent = "";
-  hasil.classList.remove('show');
-  loadingMsg.style.display = "block";
-  
-  try {
-    const res = await fetch(`${API_URL}?resi=${encodeURIComponent(resiVal)}`);
-    const json = await res.json();
-    loadingMsg.style.display = "none";
-    
-    if (!json.found) {
-      errorMsg.textContent = "Nomor resi tidak ditemukan";
-      return;
-    }
-    
-    dataResi = json;
-    modalPin.classList.add('active');
-    pinBoxes[0].focus();
-    
-  } catch (err) {
-    loadingMsg.style.display = "none";
-    errorMsg.textContent = "Kesalahan jaringan, coba lagi";
-    console.error(err);
-  }
-});
-
-btnKonfirmasi.addEventListener('click', () => {
-  const pin = Array.from(pinBoxes).map(b => String(b.value).trim()).join('');
-  document.getElementById('pinError').textContent = "";
-  
-  if (pin.length !== 4) {
-    document.getElementById('pinError').textContent = "Masukkan 4 digit kode";
-    return;
-  }
-  
-  const pinBersih = String(dataResi.password).trim();
-  
-  console.log("PIN masuk:", pin, "| PIN sheet:", pinBersih);
-  
-  if (pin === pinBersih) {
-    modalPin.classList.remove('active');
-    pinBoxes.forEach(b => b.value = "");
-    
-    noResiTampil.textContent = elResi.value.trim();
-    
-    timelineList.innerHTML = "";
-    const total = dataResi.riwayat.length;
-    
-    dataResi.riwayat.forEach((item, index) => {
-      const isTerakhir = index === total - 1;
-      const isSelesai = item.keterangan.includes("diterima") || item.keterangan.includes("✅");
-      
-      const div = document.createElement('div');
-      div.className = `timeline-item ${isTerakhir ? 'terkini' : ''} ${isSelesai ? 'selesai' : ''}`;
-      div.innerHTML = `
-        <div class="timeline-dot"></div>
-        <div class="timeline-date">${item.tanggal} • ${item.waktu}</div>
-        <div class="timeline-loc">${item.lokasi}</div>
-        <div class="timeline-desc">${item.keterangan}</div>
-      `;
-      timelineList.appendChild(div);
+  fetch(URL_APPSCRIPT + "?aksi=cekResi&noResi=" + encodeURIComponent(noResi))
+    .then(r => r.json())
+    .then(res => {
+      if (res.sukses) {
+        const d = res.data;
+        document.getElementById("hResi").textContent = d.noResi;
+        document.getElementById("hNama").textContent = d.namaPenerima;
+        document.getElementById("hAlamat").textContent = d.alamat;
+        document.getElementById("hEkspedisi").textContent = d.ekspedisi;
+        document.getElementById("hStatus").textContent = d.status;
+        document.getElementById("hKet").textContent = d.keterangan;
+        document.getElementById("hTgl").textContent = d.tanggalUpdate;
+        hasil.classList.add("tampil");
+      } else {
+        pesan.textContent = res.pesan;
+        pesan.classList.add("tampil", "gagal");
+      }
+    })
+    .catch(() => {
+      pesan.textContent = "Koneksi gagal, coba lagi";
+      pesan.classList.add("tampil", "gagal");
     });
-    
-    hasil.classList.add('show');
-    
-  } else {
-    document.getElementById('pinError').innerHTML = 
-      `Kode salah!<br>Seharusnya: <b>${pinBersih}</b><br>Kamu masukkan: <b>${pin}</b>`;
-    pinBoxes.forEach(b => b.value = "");
-    pinBoxes[0].focus();
-  }
-});
-
-btnBatal.addEventListener('click', () => {
-  modalPin.classList.remove('active');
-  pinBoxes.forEach(b => b.value = "");
-  dataResi = null;
-});
-
-modalPin.addEventListener('click', (e) => {
-  if (e.target === modalPin) {
-    modalPin.classList.remove('active');
-    pinBoxes.forEach(b => b.value = "");
-  }
-});
+}
 </script>
 </body>
 </html>
