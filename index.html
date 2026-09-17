@@ -28,8 +28,27 @@
     .nilai {font-size:15px; color:#1e293b; font-weight:500; word-break:break-word;}
     .nilai.status {font-size:17px; font-weight:700; color:#16a34a;}
     .nilai.tanggal {font-size:13px; color:#64748b; margin-top:4px;}
+    
+    /* === TIMELINE RIWAYAT === */
+    .judul-riwayat {font-size:16px; font-weight:bold; color:#1e293b; margin:20px 0 12px; display:flex; align-items:center; gap:8px;}
+    .timeline {position:relative; padding-left:30px;}
+    .timeline::before {content:''; position:absolute; left:10px; top:8px; bottom:8px; width:2px; background:#e2e8f0;}
+    .langkah {position:relative; margin-bottom:20px;}
+    .titik {position:absolute; left:-26px; top:4px; width:12px; height:12px; background:#2563eb; border-radius:50%; border:3px solid #dbeafe;}
+    .langkah.terbaru .titik {background:#16a34a; border-color:#dcfce7; box-shadow:0 0 0 4px rgba(22,163,74,0.1);}
+    .langkah.selesai .titik {background:#94a3b8; border-color:#f1f5f9;}
+    .tgl-langkah {font-size:12px; color:#94a3b8; margin-bottom:2px;}
+    .status-langkah {font-weight:600; color:#1e293b; margin-bottom:2px;}
+    .lokasi-langkah {font-size:14px; color:#475569; margin-bottom:2px;}
+    .ket-langkah {font-size:13px; color:#78716c;}
+    
     .langkah {display:none;}
     .langkah.tampil {display:block;}
+    
+    .langkah-tanpa-riwayat {text-align:center; color:#94a3b8; padding:15px; font-size:14px;}
+    
+    .langkah-form {display:none;}
+    .langkah-form.tampil {display:block;}
     .kembali {background:transparent; color:#2563eb; border:2px solid #2563eb; margin-top:8px;}
     .kembali:hover {background:#eff6ff;}
     @keyframes muncul {from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
@@ -40,18 +59,18 @@
 
 <div class="container">
   <h2>📦 Cek Riwayat Pengiriman</h2>
-  <p class="sub-judul">Masukkan nomor resi & PIN untuk melacak paket</p>
+  <p class="sub-judul">Lacak posisi paket Anda secara real-time</p>
 
   <!-- LANGKAH 1: Masukkan Resi -->
-  <div id="langkahResi" class="langkah tampil">
+  <div id="langkahResi" class="langkah-form tampil">
     <p class="contoh">Contoh: TNX123456</p>
     <input type="text" id="noResi" placeholder="Masukkan Nomor Resi" autocomplete="off">
     <button onclick="lanjutKePin()">Lanjut →</button>
   </div>
 
   <!-- LANGKAH 2: Masukkan PIN -->
-  <div id="langkahPin" class="langkah">
-    <p class="contoh">Masukkan PIN 4 Digit yang diberikan penjual</p>
+  <div id="langkahPin" class="langkah-form">
+    <p class="contoh">Masukkan PIN 4 Digit dari penjual</p>
     <input type="password" id="pinResi" class="pin" placeholder="• • • •" maxlength="4" autocomplete="off" inputmode="numeric">
     <button onclick="cekData()">Lihat Riwayat</button>
     <button class="kembali" onclick="kembaliKeResi()">← Kembali</button>
@@ -59,15 +78,32 @@
 
   <div id="pesan" class="pesan"></div>
 
-  <!-- HASIL -->
+  <!-- HASIL LENGKAP + RIWAYAT -->
   <div id="hasil" class="hasil">
-    <div class="kartu"><div class="label">Nomor Resi</div><div class="nilai" id="hResi"></div></div>
-    <div class="kartu"><div class="label">Nama Penerima</div><div class="nilai" id="hNama"></div></div>
-    <div class="kartu"><div class="label">Alamat Tujuan</div><div class="nilai" id="hAlamat"></div></div>
-    <div class="kartu"><div class="label">Ekspedisi</div><div class="nilai" id="hEkspedisi"></div></div>
-    <div class="kartu"><div class="label">Status Pengiriman</div><div class="nilai status" id="hStatus"></div></div>
-    <div class="kartu"><div class="label">Keterangan</div><div class="nilai" id="hKet"></div></div>
-    <div class="kartu"><div class="label">Terakhir Diperbarui</div><div class="nilai tanggal" id="hTgl"></div></div>
+    <div class="kartu">
+      <div class="label">Nomor Resi</div>
+      <div class="nilai" id="hResi"></div>
+    </div>
+    <div class="kartu">
+      <div class="label">Penerima</div>
+      <div class="nilai" id="hNama"></div>
+    </div>
+    <div class="kartu">
+      <div class="label">Alamat Tujuan</div>
+      <div class="nilai" id="hAlamat"></div>
+    </div>
+    <div class="kartu">
+      <div class="label">Ekspedisi</div>
+      <div class="nilai" id="hEkspedisi"></div>
+    </div>
+    <div class="kartu">
+      <div class="label">Status Terkini</div>
+      <div class="nilai status" id="hStatus"></div>
+    </div>
+
+    <h3 class="judul-riwayat">📍 Riwayat Perjalanan</h3>
+    <div id="wadahRiwayat" class="timeline"></div>
+
     <button class="kembali" onclick="cekUlang()">Cek Resi Lain</button>
   </div>
 
@@ -75,8 +111,8 @@
 </div>
 
 <script>
-// Ganti URL dengan URL Apps Script kamu
-const URL_APPSCRIPT = "https://script.google.com/macros/s/AKfycbwtDwoSH9ETRU1Sm11Qy5AU38-Eo0wEYQgPEkXb4g8Yd7LaKmkmay-TLK2tUsZsuGDyyg/exec";
+// Ganti URL dengan milikmu
+const URL_APPSCRIPT = "https://script.google.com/macros/s/AKfycbyR8PiIXW9CaIJ2Cg-1TlA9gYBpcW4ipOUtS6Acp9h98db6vnapPI_XrPQUcVCubVwFkw/exec";
 
 let noResiSaatIni = "";
 const elPesan = document.getElementById("pesan");
@@ -138,9 +174,29 @@ function cekData() {
         document.getElementById("hNama").textContent = d.namaPenerima || "-";
         document.getElementById("hAlamat").textContent = d.alamat || "-";
         document.getElementById("hEkspedisi").textContent = d.ekspedisi || "-";
-        document.getElementById("hStatus").textContent = d.status || "-";
-        document.getElementById("hKet").textContent = d.keterangan || "Tidak ada keterangan tambahan";
-        document.getElementById("hTgl").textContent = d.tanggalUpdate || "-";
+        document.getElementById("hStatus").textContent = d.statusTerakhir || "-";
+        
+        // Tampilkan Riwayat
+        const wadah = document.getElementById("wadahRiwayat");
+        wadah.innerHTML = "";
+        
+        if (d.riwayat && d.riwayat.length > 0) {
+          d.riwayat.forEach((langkah, indeks) => {
+            const kelasTerbaru = indeks === 0 ? "terbaru" : "";
+            const html = `
+              <div class="langkah tampil ${kelasTerbaru}">
+                <div class="titik"></div>
+                <div class="tgl-langkah">${langkah.tanggal}</div>
+                <div class="status-langkah">${langkah.status}</div>
+                <div class="lokasi-langkah">📍 ${langkah.lokasi}</div>
+                ${langkah.keterangan ? `<div class="ket-langkah">${langkah.keterangan}</div>` : ""}
+              </div>
+            `;
+            wadah.insertAdjacentHTML("beforeend", html);
+          });
+        } else {
+          wadah.innerHTML = `<p class="langkah-tanpa-riwayat">Belum ada riwayat perjalanan</p>`;
+        }
         
         document.getElementById("langkahPin").classList.remove("tampil");
         document.getElementById("hasil").classList.add("tampil");
