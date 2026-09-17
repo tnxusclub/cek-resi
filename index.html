@@ -1,110 +1,176 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cek Resi</title>
+  <title>Cek Riwayat Pengiriman — TNXUS CLUB</title>
   <style>
-    *{box-sizing:border-box; font-family:Arial, sans-serif; margin:0; padding:0;}
-    body{background:#f0f4f8; padding:20px;}
-    .container{max-width:450px; margin:0 auto; background:white; padding:25px; border-radius:12px; box-shadow:0 2px 10px rgba(0,0,0,0.1);}
-    h2{text-align:center; margin-bottom:20px; color:#2d3748;}
-    input{width:100%; padding:14px; margin:10px 0; border:2px solid #e2e8f0; border-radius:8px; font-size:16px; text-align:center;}
-    button{width:100%; padding:14px; background:#2b6cb0; color:white; border:none; border-radius:8px; font-size:16px; font-weight:bold; cursor:pointer;}
-    button:hover{background:#2c5282;}
-    .hasil{margin-top:20px; display:none;}
-    .hasil.tampil{display:block;}
-    .box{background:#f7fafc; padding:15px; border-radius:8px; margin-bottom:10px; border-left:4px solid #2b6cb0;}
-    .label{font-weight:bold; color:#4a5568; font-size:14px;}
-    .nilai{color:#2d3748; margin-top:4px;}
-    .status{font-weight:bold; font-size:18px; color:#2f8556;}
-    .pesan{margin-top:15px; padding:12px; border-radius:8px; text-align:center; display:none;}
-    .pesan.tampil{display:block;}
-    .berhasil{background:#f0fff4; color:#22543d;}
-    .gagal{background:#fed7d7; color:#742a2a;}
+    * {box-sizing:border-box; font-family:'Segoe UI',Roboto,Arial,sans-serif; margin:0; padding:0;}
+    body {background:linear-gradient(135deg,#f5f7fa 0%,#e4e8ec 100%); min-height:100vh; padding:20px;}
+    .container {max-width:480px; margin:40px auto; background:#fff; padding:30px 25px; border-radius:16px; box-shadow:0 4px 20px rgba(0,0,0,0.08);}
+    h2 {text-align:center; color:#1a202c; margin-bottom:8px; font-size:22px;}
+    .sub-judul {text-align:center; color:#718096; margin-bottom:25px; font-size:14px;}
+    .contoh {font-size:13px; color:#718096; margin-bottom:8px;}
+    input {width:100%; padding:15px 18px; margin-bottom:14px; border:2px solid #e2e8f0; border-radius:10px; font-size:16px; text-align:center; transition:border-color 0.2s;}
+    input:focus {outline:none; border-color:#2563eb;}
+    input.pin {letter-spacing:12px; font-size:20px; font-weight:bold; max-width:200px; margin-left:auto; margin-right:auto;}
+    button {width:100%; padding:15px; background:#2563eb; color:#fff; border:none; border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; transition:background 0.2s;}
+    button:hover {background:#1d4ed8;}
+    button:disabled {background:#94a3b8; cursor:not-allowed;}
+    .pesan {margin-top:18px; padding:14px; border-radius:10px; text-align:center; display:none;}
+    .pesan.tampil {display:block; animation:muncul 0.3s ease;}
+    .pesan.berhasil {background:#f0fdf4; color:#166534; border-left:4px solid #16a34a;}
+    .pesan.gagal {background:#fef2f2; color:#991b1b; border-left:4px solid #ef4444;}
+    .hasil {margin-top:22px; display:none; animation:muncul 0.4s ease;}
+    .hasil.tampil {display:block;}
+    .kartu {background:#f8fafc; padding:16px; border-radius:10px; margin-bottom:10px; border-left:3px solid #2563eb;}
+    .label {font-size:13px; color:#64748b; margin-bottom:3px;}
+    .nilai {font-size:15px; color:#1e293b; font-weight:500; word-break:break-word;}
+    .nilai.status {font-size:17px; font-weight:700; color:#16a34a;}
+    .nilai.tanggal {font-size:13px; color:#64748b; margin-top:4px;}
+    .langkah {display:none;}
+    .langkah.tampil {display:block;}
+    .kembali {background:transparent; color:#2563eb; border:2px solid #2563eb; margin-top:8px;}
+    .kembali:hover {background:#eff6ff;}
+    @keyframes muncul {from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+    .footer {text-align:center; margin-top:30px; font-size:12px; color:#94a3b8;}
   </style>
 </head>
 <body>
+
 <div class="container">
-  <h2>📦 Cek Status Pengiriman</h2>
-  <input type="text" id="noResi" placeholder="Masukkan Nomor Resi" autocomplete="off">
-  <button onclick="cekResi()">Cek Sekarang</button>
-  
-  <div id="pesan" class="pesan"></div>
-  
-  <div id="hasil" class="hasil">
-    <div class="box">
-      <div class="label">Nomor Resi</div>
-      <div class="nilai" id="hResi"></div>
-    </div>
-    <div class="box">
-      <div class="label">Penerima</div>
-      <div class="nilai" id="hNama"></div>
-    </div>
-    <div class="box">
-      <div class="label">Alamat</div>
-      <div class="nilai" id="hAlamat"></div>
-    </div>
-    <div class="box">
-      <div class="label">Ekspedisi</div>
-      <div class="nilai" id="hEkspedisi"></div>
-    </div>
-    <div class="box">
-      <div class="label">Status</div>
-      <div class="nilai status" id="hStatus"></div>
-    </div>
-    <div class="box">
-      <div class="label">Keterangan</div>
-      <div class="nilai" id="hKet"></div>
-    </div>
-    <div class="box">
-      <div class="label">Terakhir Diperbarui</div>
-      <div class="nilai" id="hTgl"></div>
-    </div>
+  <h2>📦 Cek Riwayat Pengiriman</h2>
+  <p class="sub-judul">Masukkan nomor resi & PIN untuk melacak paket</p>
+
+  <!-- LANGKAH 1: Masukkan Resi -->
+  <div id="langkahResi" class="langkah tampil">
+    <p class="contoh">Contoh: TNX123456</p>
+    <input type="text" id="noResi" placeholder="Masukkan Nomor Resi" autocomplete="off">
+    <button onclick="lanjutKePin()">Lanjut →</button>
   </div>
+
+  <!-- LANGKAH 2: Masukkan PIN -->
+  <div id="langkahPin" class="langkah">
+    <p class="contoh">Masukkan PIN 4 Digit yang diberikan penjual</p>
+    <input type="password" id="pinResi" class="pin" placeholder="• • • •" maxlength="4" autocomplete="off" inputmode="numeric">
+    <button onclick="cekData()">Lihat Riwayat</button>
+    <button class="kembali" onclick="kembaliKeResi()">← Kembali</button>
+  </div>
+
+  <div id="pesan" class="pesan"></div>
+
+  <!-- HASIL -->
+  <div id="hasil" class="hasil">
+    <div class="kartu"><div class="label">Nomor Resi</div><div class="nilai" id="hResi"></div></div>
+    <div class="kartu"><div class="label">Nama Penerima</div><div class="nilai" id="hNama"></div></div>
+    <div class="kartu"><div class="label">Alamat Tujuan</div><div class="nilai" id="hAlamat"></div></div>
+    <div class="kartu"><div class="label">Ekspedisi</div><div class="nilai" id="hEkspedisi"></div></div>
+    <div class="kartu"><div class="label">Status Pengiriman</div><div class="nilai status" id="hStatus"></div></div>
+    <div class="kartu"><div class="label">Keterangan</div><div class="nilai" id="hKet"></div></div>
+    <div class="kartu"><div class="label">Terakhir Diperbarui</div><div class="nilai tanggal" id="hTgl"></div></div>
+    <button class="kembali" onclick="cekUlang()">Cek Resi Lain</button>
+  </div>
+
+  <div class="footer">© 2026 TNXUS CLUB — Semua Hak Dilindungi</div>
 </div>
 
 <script>
 // Ganti URL dengan URL Apps Script kamu
-const URL_APPSCRIPT = "https://script.google.com/macros/s/AKfycbxJ3BDNroAqtC9mF8QIjTYOoYCafUUbFAWpqGATk6AZxqcujVXi7JuVGr60_zCsXJy0Fw/exec";
+const URL_APPSCRIPT = "https://script.google.com/macros/s/AKfycbwtDwoSH9ETRU1Sm11Qy5AU38-Eo0wEYQgPEkXb4g8Yd7LaKmkmay-TLK2tUsZsuGDyyg/exec";
 
-function cekResi() {
+let noResiSaatIni = "";
+const elPesan = document.getElementById("pesan");
+
+function resetPesan() {
+  elPesan.classList.remove("tampil", "berhasil", "gagal");
+  elPesan.textContent = "";
+}
+
+function tampilPesan(teks, sukses = true) {
+  resetPesan();
+  elPesan.textContent = teks;
+  elPesan.classList.add("tampil", sukses ? "berhasil" : "gagal");
+}
+
+function lanjutKePin() {
   const noResi = document.getElementById("noResi").value.trim();
-  const pesan = document.getElementById("pesan");
-  const hasil = document.getElementById("hasil");
-  
-  pesan.classList.remove("tampil", "berhasil", "gagal");
-  hasil.classList.remove("tampil");
-  
   if (!noResi) {
-    pesan.textContent = "Masukkan nomor resi terlebih dahulu";
-    pesan.classList.add("tampil", "gagal");
+    tampilPesan("Masukkan nomor resi terlebih dahulu", false);
+    return;
+  }
+  noResiSaatIni = noResi;
+  resetPesan();
+  document.getElementById("langkahResi").classList.remove("tampil");
+  document.getElementById("langkahPin").classList.add("tampil");
+  document.getElementById("pinResi").value = "";
+  document.getElementById("pinResi").focus();
+}
+
+function kembaliKeResi() {
+  resetPesan();
+  document.getElementById("langkahPin").classList.remove("tampil");
+  document.getElementById("langkahResi").classList.add("tampil");
+  document.getElementById("hasil").classList.remove("tampil");
+}
+
+function cekData() {
+  const pin = document.getElementById("pinResi").value.trim();
+  const btn = event.target;
+  
+  if (!pin || pin.length !== 4 || !/^\d+$/.test(pin)) {
+    tampilPesan("Masukkan PIN 4 Digit yang benar", false);
     return;
   }
   
-  fetch(URL_APPSCRIPT + "?aksi=cekResi&noResi=" + encodeURIComponent(noResi))
-    .then(r => r.json())
-    .then(res => {
-      if (res.sukses) {
-        const d = res.data;
+  btn.disabled = true;
+  btn.textContent = "Memverifikasi...";
+  resetPesan();
+  
+  fetch(`${URL_APPSCRIPT}?aksi=cekResi&noResi=${encodeURIComponent(noResiSaatIni)}&pin=${encodeURIComponent(pin)}`)
+    .then(res => res.json())
+    .then(data => {
+      btn.disabled = false;
+      btn.textContent = "Lihat Riwayat";
+      
+      if (data.sukses) {
+        const d = data.data;
         document.getElementById("hResi").textContent = d.noResi;
-        document.getElementById("hNama").textContent = d.namaPenerima;
-        document.getElementById("hAlamat").textContent = d.alamat;
-        document.getElementById("hEkspedisi").textContent = d.ekspedisi;
-        document.getElementById("hStatus").textContent = d.status;
-        document.getElementById("hKet").textContent = d.keterangan;
-        document.getElementById("hTgl").textContent = d.tanggalUpdate;
-        hasil.classList.add("tampil");
+        document.getElementById("hNama").textContent = d.namaPenerima || "-";
+        document.getElementById("hAlamat").textContent = d.alamat || "-";
+        document.getElementById("hEkspedisi").textContent = d.ekspedisi || "-";
+        document.getElementById("hStatus").textContent = d.status || "-";
+        document.getElementById("hKet").textContent = d.keterangan || "Tidak ada keterangan tambahan";
+        document.getElementById("hTgl").textContent = d.tanggalUpdate || "-";
+        
+        document.getElementById("langkahPin").classList.remove("tampil");
+        document.getElementById("hasil").classList.add("tampil");
       } else {
-        pesan.textContent = res.pesan;
-        pesan.classList.add("tampil", "gagal");
+        tampilPesan(data.pesan, false);
       }
     })
     .catch(() => {
-      pesan.textContent = "Koneksi gagal, coba lagi";
-      pesan.classList.add("tampil", "gagal");
+      btn.disabled = false;
+      btn.textContent = "Lihat Riwayat";
+      tampilPesan("Koneksi gagal, coba lagi", false);
     });
 }
+
+function cekUlang() {
+  noResiSaatIni = "";
+  document.getElementById("noResi").value = "";
+  document.getElementById("pinResi").value = "";
+  resetPesan();
+  document.getElementById("hasil").classList.remove("tampil");
+  document.getElementById("langkahResi").classList.add("tampil");
+}
+
+// Enter support
+document.getElementById("noResi").addEventListener("keydown", e => {
+  if (e.key === "Enter") lanjutKePin();
+});
+document.getElementById("pinResi").addEventListener("keydown", e => {
+  if (e.key === "Enter") cekData();
+});
 </script>
 </body>
 </html>
